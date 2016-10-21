@@ -1,0 +1,10 @@
+# folder logs
+logs/
+
+# packages
+packages/
+
+# obj files
+obj/
+viewTab/obj
+viewTab/bin
