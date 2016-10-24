@@ -1,5 +1,6 @@
 # folder logs
 logs/
+*.txt
 
 # packages
 packages/
@@ -8,3 +9,4 @@ packages/
 obj/
 viewTab/obj
 viewTab/bin
+

@@ -1,6 +1,7 @@
 ﻿using disp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -32,67 +34,170 @@ namespace viewTab
         public MainWindow()
         {   
             InitializeComponent();
+            PrintZones();
+            Test();
+            //test_intersect();
+        }
+        void PrintZones()
+        {
+            DepotPlaces _dp = new DepotPlaces();            
+            foreach (Line line in _dp.Depots)
+            {
+                if(line.Type == "dept")
+                    drawPolygin(line, "orange");
+                else
+                    drawPolygin(line, "brown");
+            }
 
-            DepotPlaces _dp = new DepotPlaces();
-            foreach(Line line in _dp.Depots)
-                foreach(Point point in line.Points)
-                    addEllipse(point.X, point.Y, "dapt", 7, "orange");
-
+            /*
+            foreach (Line line in _dp.Depots)
+                foreach (PointD point in line.Points)
+                    addEllipse(point.X, point.Y, "dept", 7, "orange");
+              
+            ParkingPlaces _pp = new ParkingPlaces();
+            foreach (Line line in _pp.Parkings)
+                foreach (PointD point in line.Points)
+                    addEllipse(point.X, point.Y, "park", 7, "brown");
+                    */
+        }
+        void Test()
+        {                                                            
             Enterprise _ent = new Enterprise(@"C:\mok\park.json");
 
-            label_title.Content = "";
+            //label_title.Content = "";
             _source = getData();
             StringBuilder _sb_load = new StringBuilder();
             StringBuilder _sb_unload = new StringBuilder();
+            StringBuilder _sb_park = new StringBuilder();
+            StringBuilder _sb_event = new StringBuilder();
+
+            bool new_event = true;
+            bool start = true;
+            bool end = false;
+            //Polyline pl = null;
+            //bool isPolyline = false;
+
+            //addEllipse(62.759122, 52.536982, "0000", 10, "red", pluslabel: true);
             foreach (item item in _source)
-            {                   
+            {             
                 if (item.longitude == 0 && item.latitude == 0)
                     continue;
                 string res = _ent.AddMessage(Source.Park[item.deviceID], item.latitude, item.longitude, time2time.GetDateTimeByEcho(item.timestamp));
-                if (item.deviceID == "804")
-                {      
-                    
-                    if (res == "UU")
-                    {
-                        addEllipse(item.longitude, item.latitude, item.deviceID, 10, "black");
-                        _sb_unload.AppendFormat("{0}\t",
-                            time2time.GetDateTimeByEcho(item.timestamp));
-                    }
-                    if (res == "LL")
-                    {
-                        addEllipse(item.longitude, item.latitude, item.deviceID, 10, "green");
-                        _sb_load.AppendFormat("{0}\t",
-                            time2time.GetDateTimeByEcho(item.timestamp));
-                    }
-
-                    //else
-                    //    addEllipse(item.longitude, item.latitude, item.deviceID);
-                }               
-                /*    
+                
                 if (item.deviceID == "125")
                     addEllipse(item.longitude, item.latitude, item.deviceID, 7, "yellow");
                 if (item.deviceID == "71")
-                    addEllipse(item.longitude, item.latitude, item.deviceID, 7, "black");
+                    addEllipse(item.longitude, item.latitude, item.deviceID, 13, "pink");
                 if (item.deviceID == "134")
                     addEllipse(item.longitude, item.latitude, item.deviceID, 7, "red");
                 if (item.deviceID == "13")
                     addEllipse(item.longitude, item.latitude, item.deviceID, 7, "blue");
                 if (item.deviceID == "157")
                     addEllipse(item.longitude, item.latitude, item.deviceID, 7, "pink");
+                if (item.deviceID == "39")
+                    addEllipse(item.longitude, item.latitude, item.deviceID, 7, "red");
                 //else addEllipse(item.longitude, item.latitude, item.deviceID);
-                */
+                                
+
+                if (item.deviceID != "804")
+                    continue;
+
+                //if (item.speedKPH == 0)
+                //{
+                //    addEllipse(item.longitude, item.latitude, item.deviceID, 10, "red", pluslabel: true, time: string.Format("{0}\n{1}",time2time.GetDateTimeByEcho(item.timestamp), item.timestamp));
+                //}
+                    
+
+                if (res == "PP")
+                {
+                    if(item.timestamp > Dates.oct13_day6)
+                        start = true;
+                    if (item.timestamp > Dates.oct13_night6 - 10000)
+                        end = true;
+                    if (new_event)
+                    {
+                        _sb_park.AppendFormat("{0}\n", time2time.GetDateTimeByEcho(item.timestamp));                        
+                        new_event = false;
+                    }   
+                }
+
+                if (!start)
+                    continue;
+
+                _sb_event.AppendFormat("{0}[{1}]\t", res, time2time.GetDateTimeByEcho(item.timestamp));
+
+                if (res == "UU")
+                {                             
+                    addEllipse(item.longitude, item.latitude, item.deviceID, 10, "black");
+                    //addPointToPolyline(item.longitude, item.latitude, ref pl);
+                    if (new_event)
+                    {
+                        _sb_unload.AppendFormat("{0}\n", time2time.GetDateTimeByEcho(item.timestamp));
+                        new_event = false;
+                        //isPolyline = true;
+                    }
+                }
+                else if (res == "LL")
+                {                                                         
+                    addEllipse(item.longitude, item.latitude, item.deviceID, 10, "green");
+                    //addPointToPolyline(item.longitude, item.latitude, ref pl);
+                    if (new_event)
+                    {
+                        _sb_load.AppendFormat("{0}\n", time2time.GetDateTimeByEcho(item.timestamp));
+                        new_event = false;
+                        //isPolyline = true;
+                    }
+                }
+                else
+                {
+                    if (!new_event)
+                    {
+                        /*
+                        if (isPolyline)
+                        {
+                            drawPolyline(pl);
+                            isPolyline = false;
+                        }
+                        */    
+                        new_event = true;
+                        //pl = new Polyline();
+                        //addPointToPolyline(item.longitude, item.latitude, ref pl);
+                    }
+                    
+                    if (end)
+                        break;
+                    addEllipse(item.longitude, item.latitude, item.deviceID);
+                }
+                
             }
-            string s = string.Format("load:\n{0}\nunload:\n{1}", _sb_load.ToString(), _sb_unload.ToString());
-            label_title.Content = s;
+            label_time.Content = string.Format("Count: {0}", Main_Canvas.Children.Count);
+            Writer.Do(string.Format("load:\n{0}\nunload:\n{1}\npark:\n{2}\nevents:\n{3}", _sb_load.ToString(), _sb_unload.ToString(), _sb_park.ToString(), _sb_event.ToString()));
 
+        }
+        void drawPolyline(Polyline pl)
+        {
+            Main_Canvas.Children.Add(pl);
+        }
+        void addPointToPolyline(double x, double y, ref Polyline pl)
+        {
+            double _x = x;
+            double _y = y;
+            GEOCoordinate coord = new GEOCoordinate(_y, _x);
+            coord.TransferToUTM();
 
+            _x = (coord.X - 7481.98202458583) / 5;
+            _y = (coord.Y - 85202.4156350847) / 5;
+
+            pl.Points.Add(new System.Windows.Point(_y + 50, _x + 50));
+            //poly.Points.Add(new System.Windows.Point(_y + 50, _x + 50));
 
         }
 
         List<item> _source;
         List<item> getData()
         {
-            List<item> _list = Source.GetTestData(Dates.oct13_day, Dates.oct13_night);
+            //List<item> _list = Source.GetTestData(Dates.oct13_day6 - 10000, Dates.oct13_night6 + 10000);
+            List<item> _list = Source.GetTestData(1476367493, 1476369568);
             _list.Sort(delegate (item x, item y)
             {
                 if (x.timestamp == 0 && y.timestamp == 0) return 0;
@@ -103,12 +208,50 @@ namespace viewTab
             return _list;
         }
         Ellipse ell;
-                               
+
+        void test_intersect()
+        {
+            addEllipse(62.761, 52.535293, "park", 7, "black");
+
+            
+        }
+
+        void drawPolygin(Line line, string color)
+        {
+            Polygon poly = new Polygon();
+            poly.Stroke = (Brush)new BrushConverter().ConvertFrom(color);
+            poly.StrokeThickness = 0.5;
+            double _x = 0;
+            double _y = 0;
+            foreach (PointD point in line.Points)
+            {
+                _x = point.X;
+                _y = point.Y;
+                GEOCoordinate coord = new GEOCoordinate(_y, _x);
+                coord.TransferToUTM();
+
+                _x = (coord.X - 7481.98202458583) / 5;
+                _y = (coord.Y - 85202.4156350847) / 5;
+
+                poly.Points.Add(new System.Windows.Point(_y + 50, _x + 50));
+            }                                                    
+            //poly.Fill = (Brush)new BrushConverter().ConvertFrom("gray");
+
+            Main_Canvas.Children.Add(poly);
+
+            
+            Label polyLabel = new Label();
+            polyLabel.Content = line.Imei;
+            Canvas.SetTop(polyLabel, _x + 50);
+            Canvas.SetLeft(polyLabel, _y + 50);    
+            Main_Canvas.Children.Add(polyLabel);
+        }
+
         double xmax = double.MinValue;
         double xmin = double.MaxValue;
         double ymax = double.MinValue;
         double ymin = double.MaxValue;
-        void addEllipse(double lon, double lat, string imei, double radius = 5, string color = "green")
+        void addEllipse(double lon, double lat, string imei, double radius = 2, string color = "green", bool pluslabel = false, string time = "")
         {
             GEOCoordinate coord = new GEOCoordinate(lat, lon);
             coord.TransferToUTM();    
@@ -135,8 +278,20 @@ namespace viewTab
             Canvas.SetTop(ell, posTop - (width / 2) + 50);
             Canvas.SetLeft(ell, posLeft - (height / 2) + 50);
 
-            Main_Canvas.Children.Add(ell);                       
-        }
+            Main_Canvas.Children.Add(ell);
+
+            //
+            
+            if (pluslabel)
+            {
+                Label label = new Label();
+                label.Content = time;
+                Canvas.SetTop(label, posTop - (width / 2) + 50);
+                Canvas.SetLeft(label, posLeft - (height / 2) + 50);
+
+                Main_Canvas.Children.Add(label);
+            }                                               
+        }        
         
         double GetLat(double lat)
         {
@@ -159,8 +314,13 @@ namespace viewTab
             double res = t * 500;
             return res;
         }
+        public void NextStep(double lon, double lat, string name, string time)
+        {
+            addEllipse(lon, lat, name);
 
-
+            //label_title.Content = string.Format("tracker:\t{0}\ttime:\t{1}", name, time);
+        }
+                   
 
 
         /*
@@ -303,9 +463,7 @@ namespace viewTab
             Main_Canvas.Children.Add(ell);            
             //if (ellClass != null) ellClass.ell = ell;
         }
-        */
-
-
+        */    
         /*
         void DrawPlaces(DepotPlaces dp)
         {                             

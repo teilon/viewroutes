@@ -19,10 +19,12 @@ namespace viewTab
             foreach (Line tm in list)
             {
                 Line line = new Line();
-                foreach (Point p in tm.Points)
+                foreach (PointD p in tm.Points)
                 {
-                    line.Points.Add(new Point(p.X, p.Y));
+                    line.Points.Add(new PointD(p.X, p.Y));
                 }
+                line.Imei = tm.Imei;
+                line.Type = tm.Type;
                 _depots.Add(line);
             }
         }
@@ -50,9 +52,9 @@ namespace viewTab
             foreach (Line tm in list)
             {
                 Line line = new Line();
-                foreach (Point p in tm.Points)
+                foreach (PointD p in tm.Points)
                 {
-                    line.Points.Add(new Point(p.X, p.Y));
+                    line.Points.Add(new PointD(p.X, p.Y));
                 }
                 _excavators.Add(line);
             }
@@ -73,17 +75,17 @@ namespace viewTab
     public class ParkingPlaces
     {
         List<Line> _parking;
-        public List<Line> Parking { get { return _parking; } }
+        public List<Line> Parkings { get { return _parking; } }
         public ParkingPlaces()
         {
-            List<Line> list = OpenJson("parking.json");
+            List<Line> list = OpenJson(@"c:\mok\parking.json");
             _parking = new List<Line>();
             foreach (Line tm in list)
             {
                 Line line = new Line();
-                foreach (Point p in tm.Points)
+                foreach (PointD p in tm.Points)
                 {
-                    line.Points.Add(new Point(p.X, p.Y));
+                    line.Points.Add(new PointD(p.X, p.Y));
                 }
                 _parking.Add(line);
             }
@@ -102,11 +104,12 @@ namespace viewTab
     }
 }  
 
-public class Point
+public class PointD
 {
     public double X;
-    public double Y;
-    public Point(double x, double y)
+    public double Y;         
+
+    public PointD(double x, double y)
     {
         X = x;
         Y = y;
@@ -117,9 +120,9 @@ public class Line
 {
     public string Imei;
     public string Type;
-    public List<Point> Points;
+    public List<PointD> Points;
     public Line()
     {
-        Points = new List<Point>();
+        Points = new List<PointD>();
     }
 }
