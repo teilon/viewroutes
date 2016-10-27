@@ -14,5 +14,9 @@ namespace viewTab
             long _0001 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(_1970).Ticks;
             return new DateTime(_0001);
         }
+        public static DateTime GetDateTimeByEcho(long ticks)
+        {                                                            
+            return new DateTime(ticks);
+        }
     }
 }

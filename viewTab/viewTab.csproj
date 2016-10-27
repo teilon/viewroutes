@@ -70,14 +70,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="coordinate_convert.cs" />
-    <Compile Include="Dates.cs" />
+    <Compile Include="MainWindowDraw.cs" />
+    <Compile Include="convert\coordinate_convert.cs" />
+    <Compile Include="source\Dates.cs" />
     <Compile Include="ExternalSource.cs" />
-    <Compile Include="source.cs" />
-    <Compile Include="source_convert.cs" />
-    <Compile Include="source_devices.cs" />
-    <Compile Include="source_park.cs" />
-    <Compile Include="time2time.cs" />
+    <Compile Include="source\source.cs" />
+    <Compile Include="source\source_converttime.cs" />
+    <Compile Include="source\source_devices.cs" />
+    <Compile Include="source\source_dic_park_states.cs" />
+    <Compile Include="convert\time2time.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Writer.cs" />
     <Page Include="MainWindow.xaml">

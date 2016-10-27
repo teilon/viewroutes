@@ -39,5 +39,18 @@ namespace viewTab
                 { "00c", "354868056856216" },
                 { "00d", "354868056786108" }
             };
+
+        public static Dictionary<string, int> States = new Dictionary<string, int>()
+        {
+            { "LL", 0 },
+            { "UU", 1 },
+            { "PP", 2 },
+            { "LM", 3 },
+            { "UM", 4 },
+            { "PM", 5 },
+            { "ZU", 6 },
+            { "UZ", 7 },
+            { "NN", 8 }
+        };
     }
 }

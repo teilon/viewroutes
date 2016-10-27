@@ -8,7 +8,7 @@ using TimeLine;
 
 namespace viewTab
 {
-    public delegate void Step(Pack pack);
+    public delegate void Step(item pack);
                                    
     public class Timer
     {
@@ -20,7 +20,7 @@ namespace viewTab
             return _timer;           
         }
 
-        List<Pack> _packList;
+        List<item> _packList;
         DispatcherTimer timer;
         Step _step = null;
         public Step Step { set { _step = value; } }
@@ -37,7 +37,7 @@ namespace viewTab
             //timer.Interval = new TimeSpan(0, 0, 1);
             timer.Tick += timerTick;
         }                    
-        public void AddPackList(List<Pack> packList)
+        public void AddPackList(List<item> packList)
         {
             _packList = packList;
         }
@@ -48,7 +48,7 @@ namespace viewTab
                 return;
             if (_cur >= _packList.Count)
                 return;
-            Pack p = _packList[_cur];
+            item p = _packList[_cur];
             if(_step != null)
                 _step(p);              
             _cur++;

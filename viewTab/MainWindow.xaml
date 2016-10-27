@@ -10,5 +10,6 @@
         <Canvas Name="Main_Canvas" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <StackPanel x:Name="stackPanel" HorizontalAlignment="Left" Margin="642,0,0,0" VerticalAlignment="Top" Width="302"/>
         <Label x:Name="label_time" Content="current time: " HorizontalAlignment="Left" Margin="10,117,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button_time" Content="starttime" Height="24" Width="200" />
     </Grid>
 </Window>
