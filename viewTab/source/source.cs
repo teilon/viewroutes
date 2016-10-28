@@ -19,8 +19,8 @@ namespace viewTab
     static partial class Source
     {
         public static List<item> getData()
-        {                                //      Dates.oct13_day
-            List<item> _list = GetTestData(1476374400, Dates.oct13_night, true);
+        {                                //1476374400      
+            List<item> _list = GetTestData(Dates.oct13_day, Dates.oct13_night, true);
 
             _list.Sort(delegate (item x, item y)
             {
@@ -62,6 +62,7 @@ namespace viewTab
             return _list;
         }   
     }
+
     public class item
     {
         public int accountID;
